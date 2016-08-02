@@ -28,6 +28,8 @@ class MainGui(wx.Frame):
 		menu = wx.Menu()
 		m_play = menu.Append(-1, "Play/pause\tSpace", "")
 		self.Bind(wx.EVT_MENU, self.play, m_play)
+		m_stop = menu.Append(-1, "Stop\tEscape", "")
+		self.Bind(wx.EVT_MENU, self.stop, m_stop)
 		m_previous = menu.Append(-1, "Previous track\tControl+Left arrow", "")
 		self.Bind(wx.EVT_MENU, self.previous, m_previous)
 		m_next = menu.Append(-1, "Next track\tControl+Right arrow", "")
@@ -86,6 +88,8 @@ class MainGui(wx.Frame):
 		accel.append((wx.ACCEL_CTRL, ord('U'), m_stream.GetId()))
 		accel.append((wx.ACCEL_CTRL, ord('S'), m_save.GetId()))
 		accel.append((wx.ACCEL_NORMAL, ord(' '), m_play.GetId()))
+		accel.append((wx.ACCEL_NORMAL, ord('v'), m_stop.GetId()))
+		accel.append((wx.ACCEL_NORMAL, wx.WXK_ESCAPE, m_stop.GetId()))
 		accel.append((wx.ACCEL_NORMAL, ord('c'), m_play.GetId()))
 		accel.append((wx.ACCEL_NORMAL, wx.WXK_LEFT, m_seekleft.GetId()))
 		accel.append((wx.ACCEL_SHIFT, wx.WXK_LEFT, m_seekleft2.GetId()))
@@ -248,6 +252,11 @@ class MainGui(wx.Frame):
 				player.play()
 			else:
 				player.pause()
+
+	def stop(self, event):
+		if player.p.loaded==True:
+			if player.p.stream.is_playing==True:
+				player.stop()
 
 	def OnClose(self, event):
 		"""App close event handler"""
