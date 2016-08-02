@@ -1,3 +1,3 @@
 name="AccessiPlayer"
-version="0.12"
+version="0.13"
 author="DarkFlier Productions"

@@ -12,19 +12,19 @@ class status(object):
 		self.streaming=False
 		self.songindex=0
 		self.songs=[]
+		self.orig_stream=0
 		self.stream=0
-		self.tempo=0
 
 filename=""
 p=status()
 o=output.Output()
 
 def open_file(filen="",fn=""):
-	p.stream =stream.FileStream(file=filen)
+	p.orig_stream =stream.FileStream(file=filen,decode=True)
 	filename=fn
 	p.streaming=False
 	p.loaded=True
-	p.tempo=tempo.Tempo(p.stream)
+	p.stream=tempo.Tempo(p.orig_stream)
 	p.stream.volume=config.appconfig['general']['volume']
 
 def add_file(filen="",fn=""):

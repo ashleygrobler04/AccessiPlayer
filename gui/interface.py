@@ -1,3 +1,4 @@
+import speech
 import config
 import streamopener
 import os.path as path
@@ -31,26 +32,44 @@ class MainGui(wx.Frame):
 		self.Bind(wx.EVT_MENU, self.previous, m_previous)
 		m_next = menu.Append(-1, "Next track\tControl+Right arrow", "")
 		self.Bind(wx.EVT_MENU, self.next, m_next)
-		m_volup = menu.Append(-1, "Increase Volume\tUp arrow", "")
+		submenu = wx.Menu()
+		m_volup = submenu.Append(-1, "Increase Volume\tUp arrow", "")
 		self.Bind(wx.EVT_MENU, self.volup, m_volup)
-		m_voldown = menu.Append(-1, "Decrease Volume\tDown arrow", "")
+		m_voldown = submenu.Append(-1, "Decrease Volume\tDown arrow", "")
 		self.Bind(wx.EVT_MENU, self.voldown, m_voldown)
-		m_seekleft = menu.Append(-1, "Seek back 5 seconds\tLeft arrow", "")
+		menu.AppendMenu(wx.ID_ANY, "Volume", submenu)
+		submenu = wx.Menu()
+		m_seekleft = submenu.Append(-1, "Seek back 5 seconds\tLeft arrow", "")
 		self.Bind(wx.EVT_MENU, self.seekleft, m_seekleft)
-		m_seekleft2 = menu.Append(-1, "Seek back 15 seconds\tShift+Left arrow", "")
+		m_seekleft2 = submenu.Append(-1, "Seek back 15 seconds\tShift+Left arrow", "")
 		self.Bind(wx.EVT_MENU, self.seekleft2, m_seekleft2)
-		m_seekleft3 = menu.Append(-1, "Seek back 30 seconds\tControl+Shift+Left arrow", "")
+		m_seekleft3 = submenu.Append(-1, "Seek back 30 seconds\tControl+Shift+Left arrow", "")
 		self.Bind(wx.EVT_MENU, self.seekleft3, m_seekleft3)
-		m_seekleft4 = menu.Append(-1, "Seek back 1 minute\tAlt+Left arrow", "")
+		m_seekleft4 = submenu.Append(-1, "Seek back 1 minute\tAlt+Left arrow", "")
 		self.Bind(wx.EVT_MENU, self.seekleft4, m_seekleft4)
-		m_seekright = menu.Append(-1, "Seek forward 5 seconds\tRight arrow", "")
+		m_seekright = submenu.Append(-1, "Seek forward 5 seconds\tRight arrow", "")
 		self.Bind(wx.EVT_MENU, self.seekright, m_seekright)
-		m_seekright2 = menu.Append(-1, "Seek forward 15 seconds\tShift+Right arrow", "")
+		m_seekright2 = submenu.Append(-1, "Seek forward 15 seconds\tShift+Right arrow", "")
 		self.Bind(wx.EVT_MENU, self.seekright2, m_seekright2)
-		m_seekright3 = menu.Append(-1, "Seek forward 30 seconds\tControl+Shift+Right arrow", "")
+		m_seekright3 = submenu.Append(-1, "Seek forward 30 seconds\tControl+Shift+Right arrow", "")
 		self.Bind(wx.EVT_MENU, self.seekright3, m_seekright3)
-		m_seekright4 = menu.Append(-1, "Seek forward 1 minute\tAlt+Right arrow", "")
+		m_seekright4 = submenu.Append(-1, "Seek forward 1 minute\tAlt+Right arrow", "")
 		self.Bind(wx.EVT_MENU, self.seekright4, m_seekright4)
+		menu.AppendMenu(wx.ID_ANY, "Seek", submenu)
+		submenu = wx.Menu()
+		m_tempodown = submenu.Append(-1, "Decrease Tempo\tLeft bracket", "")
+		self.Bind(wx.EVT_MENU, self.tempodown, m_tempodown)
+		m_tempoup = submenu.Append(-1, "Increase Tempo\tRight bracket", "")
+		self.Bind(wx.EVT_MENU, self.tempoup, m_tempoup)
+		m_temporeset = submenu.Append(-1, "Reset Tempo\tBackslash", "")
+		self.Bind(wx.EVT_MENU, self.temporeset, m_temporeset)
+		m_pitchdown = submenu.Append(-1, "Decrease Pitch\tShift+Left bracket", "")
+		self.Bind(wx.EVT_MENU, self.pitchdown, m_pitchdown)
+		m_pitchup = submenu.Append(-1, "Increase Pitch\tShift+Right bracket", "")
+		self.Bind(wx.EVT_MENU, self.pitchup, m_pitchup)
+		m_pitchreset = submenu.Append(-1, "Reset Pitch\tShift+Backslash", "")
+		self.Bind(wx.EVT_MENU, self.pitchreset, m_pitchreset)
+		menu.AppendMenu(wx.ID_ANY, "Tempo", submenu)
 		self.menuBar.Append(menu, "&Transport")
 		menu = wx.Menu()
 		m_set = menu.Append(-1, "Speak elapsed time\tControl+Shift+e", "")
@@ -80,12 +99,42 @@ class MainGui(wx.Frame):
 		accel.append((wx.ACCEL_CTRL, wx.WXK_RIGHT, m_next.GetId()))
 		accel.append((wx.ACCEL_NORMAL, wx.WXK_UP, m_volup.GetId()))
 		accel.append((wx.ACCEL_NORMAL, wx.WXK_DOWN, m_voldown.GetId()))
+		accel.append((wx.ACCEL_NORMAL, ord('['), m_tempodown.GetId()))
+		accel.append((wx.ACCEL_NORMAL, ord(']'), m_tempoup.GetId()))
+		accel.append((wx.ACCEL_NORMAL, ord('\\'), m_temporeset.GetId()))
+		accel.append((wx.ACCEL_SHIFT, ord(']'), m_pitchup.GetId()))
+		accel.append((wx.ACCEL_SHIFT, ord('['), m_pitchdown.GetId()))
+		accel.append((wx.ACCEL_SHIFT, ord('\\'), m_pitchreset.GetId()))
 		accel.append((wx.ACCEL_CTRL|wx.ACCEL_SHIFT, ord('R'), m_srt.GetId()))
 		accel.append((wx.ACCEL_CTRL|wx.ACCEL_SHIFT, ord('E'), m_set.GetId()))
 		accel.append((wx.ACCEL_CTRL|wx.ACCEL_SHIFT, ord('T'), m_sl.GetId()))
 		self.panel.Layout()
 		accel_tbl=wx.AcceleratorTable(accel)
 		self.SetAcceleratorTable(accel_tbl)
+
+	def tempoup(self,event):
+		player.p.stream.tempo+=1
+		speech.speak("Tempo "+str(player.p.stream.tempo))
+
+	def tempodown(self,event):
+		player.p.stream.tempo-=1
+		speech.speak("Tempo "+str(player.p.stream.tempo))
+
+	def temporeset(self,event):
+		player.p.stream.tempo=0
+		speech.speak("Tempo "+str(player.p.stream.tempo))
+
+	def pitchup(self,event):
+		player.p.stream.tempo_pitch+=1
+		speech.speak("Pitch "+str(player.p.stream.tempo_pitch))
+
+	def pitchdown(self,event):
+		player.p.stream.tempo_pitch-=1
+		speech.speak("Pitch "+str(player.p.stream.tempo_pitch))
+
+	def pitchreset(self,event):
+		player.p.stream.tempo_pitch=0
+		speech.speak("Pitch "+str(player.p.stream.tempo_pitch))
 
 	def previous(self,event):
 		if player.p.loaded==True:
@@ -143,22 +192,22 @@ class MainGui(wx.Frame):
 
 	def volup(self,event):
 		if player.p.loaded==True:
-			if player.p.handle.volume<1.0:
+			if player.p.stream.volume<1.0:
 				try:
-					player.p.handle.volume+=0.02
+					player.p.stream.volume+=0.02
 				except:
 					pass
-		config.appconfig['general']['volume']=round(player.p.handle.volume,2)
+		config.appconfig['general']['volume']=round(player.p.stream.volume,2)
 		config.appconfig.write()
 
 	def voldown(self,event):
 		if player.p.loaded==True:
-			if player.p.handle.volume>0.0:
+			if player.p.stream.volume>0.0:
 				try:
-					player.p.handle.volume-=0.02
+					player.p.stream.volume-=0.02
 				except:
 					pass
-		config.appconfig['general']['volume']=round(player.p.handle.volume,1)
+		config.appconfig['general']['volume']=round(player.p.stream.volume,1)
 		config.appconfig.write()
 
 	def seekleft(self,event):
@@ -195,7 +244,7 @@ class MainGui(wx.Frame):
 
 	def play(self, event):
 		if player.p.loaded==True and player.p.streaming==False:
-			if player.p.handle.is_playing==False:
+			if player.p.stream.is_playing==False:
 				player.play()
 			else:
 				player.pause()
