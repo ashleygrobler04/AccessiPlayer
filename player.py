@@ -20,6 +20,10 @@ p=status()
 o=output.Output()
 
 def open_file(filen="",fn=""):
+	if p.stream!=0:
+		del p.stream
+	if p.orig_stream!=0:
+		del p.orig_stream
 	p.orig_stream =stream.FileStream(file=filen,decode=True)
 	filename=fn
 	p.streaming=False
