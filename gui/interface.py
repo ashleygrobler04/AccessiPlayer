@@ -1,5 +1,6 @@
 import speech
 import config
+import options
 import streamopener
 import os.path as path
 import player
@@ -22,6 +23,8 @@ class MainGui(wx.Frame):
 		self.Bind(wx.EVT_MENU, self.stream, m_stream)
 		m_save = menu.Append(-1, "Save playlist\tControl+S", "")
 		self.Bind(wx.EVT_MENU, self.save, m_save)
+		m_options = menu.Append(-1, "Options...", "")
+		self.Bind(wx.EVT_MENU, self.options, m_options)
 		m_exit = menu.Append(wx.ID_EXIT, "E&xit\tAlt-X", "Close window and exit program.")
 		self.Bind(wx.EVT_MENU, self.OnClose, m_exit)
 		self.menuBar.Append(menu, "&File")
@@ -127,6 +130,10 @@ class MainGui(wx.Frame):
 	def temporeset(self,event):
 		player.p.stream.tempo=0
 		speech.speak("Tempo "+str(player.p.stream.tempo))
+
+	def options(self,event):
+		w=options.OptionsGui()
+		w.Show()
 
 	def pitchup(self,event):
 		player.p.stream.tempo_pitch+=1
@@ -261,5 +268,8 @@ class MainGui(wx.Frame):
 	def OnClose(self, event):
 		"""App close event handler"""
 		self.Destroy()
+		config.appconfig['general']['lastsongposition']=player.p.stream.position
+		config.appconfig.write()
+
 global window
 window=MainGui(application.name+" V"+application.version)

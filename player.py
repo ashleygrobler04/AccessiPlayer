@@ -19,7 +19,8 @@ filename=""
 p=status()
 o=output.Output()
 
-def open_file(filen="",fn=""):
+def open_file(filen="",fn="",position=0):
+	config.appconfig['general']['lastsong']=filen
 	if p.stream!=0:
 		del p.stream
 	if p.orig_stream!=0:

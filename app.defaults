@@ -1,2 +1,5 @@
 [general]
 volume = float(default=1)
+lastsong = string(default="")
+lastsongposition = float(default=0)
+resumelastsong = boolean(default=True)
