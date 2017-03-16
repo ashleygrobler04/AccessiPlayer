@@ -1,7 +1,7 @@
 import speech
 import config
-import options
-import streamopener
+from gui import options
+from gui import streamopener
 import os.path as path
 import player
 import application
